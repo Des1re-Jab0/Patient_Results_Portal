@@ -19,21 +19,21 @@ class User(db.Model):
     role = db.Column(db.String(10), nullable=False)  # patient | lab | doctor
 
 
-# class Case(db.Model):
-#     """One visit: lab results + doctor conclusion + prescriptions."""
-#     __tablename__ = "cases"
-#     id = db.Column(db.Integer, primary_key=True)
-#     patient_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-#     created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-#     reviewed_by = db.Column(db.Integer, db.ForeignKey("users.id"))
-#     status = db.Column(db.String(20), nullable=False, default="lab_completed")
-#     critical = db.Column(db.Boolean, nullable=False, default=False)
-#     conclusion = db.Column(db.Text)
-#     created_at = db.Column(db.DateTime(timezone=True), default=utcnow)
-#     released_at = db.Column(db.DateTime(timezone=True))
-#     patient = db.relationship("User", foreign_keys=[patient_id])
-#     results = db.relationship("LabResult", backref="case", cascade="all, delete-orphan")
-#     prescriptions = db.relationship("Prescription", backref="case", cascade="all, delete-orphan")
+class Case(db.Model):
+    """One visit: lab results + doctor conclusion + prescriptions."""
+    __tablename__ = "cases"
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    reviewed_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    status = db.Column(db.String(20), nullable=False, default="lab_completed")
+    critical = db.Column(db.Boolean, nullable=False, default=False)
+    conclusion = db.Column(db.Text)
+    created_at = db.Column(db.DateTime(timezone=True), default=utcnow)
+    released_at = db.Column(db.DateTime(timezone=True))
+    patient = db.relationship("User", foreign_keys=[patient_id])
+    results = db.relationship("LabResult", backref="case", cascade="all, delete-orphan")
+    prescriptions = db.relationship("Prescription", backref="case", cascade="all, delete-orphan")
 
 
 # class LabResult(db.Model):
