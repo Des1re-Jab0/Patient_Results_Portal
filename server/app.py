@@ -230,35 +230,35 @@ def login():
                     "role": user.role, "full_name": user.full_name})
 
 
-# @app.post("/cases")
-# @auth_required("lab")
-# def create_case():
-#     data = body()
-#     patient = User.query.filter_by(username=req_str(data, "patient_username", 50), role="patient").first()
-#     if not patient:
-#         return error("Patient not found", 404)
-#     items = data.get("results")
-#     if not isinstance(items, list) or not 1 <= len(items) <= 50:
-#         raise ValueError("results must be a list of 1 to 50 items")
-#     case = Case(patient_id=patient.id, created_by=g.user.id)
-#     for item in items:
-#         if not isinstance(item, dict):
-#             raise ValueError("each result must be an object")
-#         value, low, high = number(item, "value"), number(item, "ref_low"), number(item, "ref_high")
-#         if low > high:
-#             raise ValueError("ref_low must not exceed ref_high")
-#         flag = flag_for(value, low, high, number(item, "crit_low", False), number(item, "crit_high", False))
-#         case.results.append(LabResult(test_name=req_str(item, "test_name", 80), value=value,
-#                                       unit=req_str(item, "unit", 20), ref_low=low, ref_high=high, flag=flag))
-#     case.critical = any(r.flag == "critical" for r in case.results)
-#     if all(r.flag == "normal" for r in case.results):  # hybrid rule: normal results auto-release
-#         case.status, case.released_at = "released", utcnow()
-#     db.session.add(case)
-#     db.session.commit()
-#     out = detail(case, "lab")
-#     out["message"] = ("All values normal: released to the patient automatically."
-#                       if case.status == "released" else "Saved. Awaiting doctor review before release.")
-#     return jsonify(out), 201
+@app.post("/cases")
+@auth_required("lab")
+def create_case():
+    data = body()
+    patient = User.query.filter_by(username=req_str(data, "patient_username", 50), role="patient").first()
+    if not patient:
+        return error("Patient not found", 404)
+    items = data.get("results")
+    if not isinstance(items, list) or not 1 <= len(items) <= 50:
+        raise ValueError("results must be a list of 1 to 50 items")
+    case = Case(patient_id=patient.id, created_by=g.user.id)
+    for item in items:
+        if not isinstance(item, dict):
+            raise ValueError("each result must be an object")
+        value, low, high = number(item, "value"), number(item, "ref_low"), number(item, "ref_high")
+        if low > high:
+            raise ValueError("ref_low must not exceed ref_high")
+        flag = flag_for(value, low, high, number(item, "crit_low", False), number(item, "crit_high", False))
+        case.results.append(LabResult(test_name=req_str(item, "test_name", 80), value=value,
+                                      unit=req_str(item, "unit", 20), ref_low=low, ref_high=high, flag=flag))
+    case.critical = any(r.flag == "critical" for r in case.results)
+    if all(r.flag == "normal" for r in case.results):  # hybrid rule: normal results auto-release
+        case.status, case.released_at = "released", utcnow()
+    db.session.add(case)
+    db.session.commit()
+    out = detail(case, "lab")
+    out["message"] = ("All values normal: released to the patient automatically."
+                      if case.status == "released" else "Saved. Awaiting doctor review before release.")
+    return jsonify(out), 201
 
 
 # @app.get("/cases")
