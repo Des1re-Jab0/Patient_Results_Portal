@@ -112,37 +112,37 @@ def auth_required(*roles):
     return wrapper
 
 
-# def body():
-#     data = request.get_json(silent=True)
-#     return data if isinstance(data, dict) else {}
+def body():
+    data = request.get_json(silent=True)
+    return data if isinstance(data, dict) else {}
 
 
-# def req_str(data, key, max_len):
-#     value = data.get(key)
-#     if not isinstance(value, str) or not value.strip():
-#         raise ValueError(f"{key} is required")
-#     value = value.strip()
-#     if len(value) > max_len:
-#         raise ValueError(f"{key} is too long (max {max_len} characters)")
-#     return value
+def req_str(data, key, max_len):
+    value = data.get(key)
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{key} is required")
+    value = value.strip()
+    if len(value) > max_len:
+        raise ValueError(f"{key} is too long (max {max_len} characters)")
+    return value
 
 
-# def number(data, key, required=True):
-#     value = data.get(key)
-#     if value is None and not required:
-#         return None
-#     if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
-#         raise ValueError(f"{key} must be a finite number")
-#     return float(value)
+def number(data, key, required=True):
+    value = data.get(key)
+    if value is None and not required:
+        return None
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+        raise ValueError(f"{key} must be a finite number")
+    return float(value)
 
 
-# def parse_date(value):
-#     if not value:
-#         return None
-#     try:
-#         return datetime.fromisoformat(value).replace(tzinfo=timezone.utc)
-#     except ValueError:
-#         raise ValueError("dates must use YYYY-MM-DD")
+def parse_date(value):
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value).replace(tzinfo=timezone.utc)
+    except ValueError:
+        raise ValueError("dates must use YYYY-MM-DD")
 
 
 # def flag_for(value, low, high, crit_low, crit_high):
