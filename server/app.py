@@ -338,23 +338,23 @@ def add_prescription(case_id):
     return jsonify(detail(case, "doctor")), 201
 
 
-# @app.post("/cases/<int:case_id>/release")
-# @auth_required("doctor")
-# def release(case_id):
-#     case = db.session.get(Case, case_id)
-#     if not case:
-#         return error("Case not found", 404)
-#     if case.status == "released":
-#         return error("Case is already released", 409)
-#     if not case.conclusion:
-#         return error("Write a conclusion before releasing", 400)
-#     case.status, case.released_at, case.reviewed_by = "released", utcnow(), g.user.id
-#     db.session.commit()
-#     return jsonify(detail(case, "doctor"))
+@app.post("/cases/<int:case_id>/release")
+@auth_required("doctor")
+def release(case_id):
+    case = db.session.get(Case, case_id)
+    if not case:
+        return error("Case not found", 404)
+    if case.status == "released":
+        return error("Case is already released", 409)
+    if not case.conclusion:
+        return error("Write a conclusion before releasing", 400)
+    case.status, case.released_at, case.reviewed_by = "released", utcnow(), g.user.id
+    db.session.commit()
+    return jsonify(detail(case, "doctor"))
 
 
-# if __name__ == "__main__":
-#     app.run(host="127.0.0.1", port=int(os.getenv("PORT", "5000")))
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=int(os.getenv("PORT", "5000")))
 
 
 
