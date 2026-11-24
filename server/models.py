@@ -48,11 +48,11 @@ class LabResult(db.Model):
     flag = db.Column(db.String(10), nullable=False)  # normal | low | high | critical
 
 
-# class Prescription(db.Model):
-#     __tablename__ = "prescriptions"
-#     id = db.Column(db.Integer, primary_key=True)
-#     case_id = db.Column(db.Integer, db.ForeignKey("cases.id"), nullable=False)
-#     drug_name = db.Column(db.String(80), nullable=False)
-#     dosage = db.Column(db.String(80), nullable=False)
-#     instructions = db.Column(db.String(255), nullable=False)
+class Prescription(db.Model):
+    __tablename__ = "prescriptions"
+    id = db.Column(db.Integer, primary_key=True)
+    case_id = db.Column(db.Integer, db.ForeignKey("cases.id"), nullable=False)
+    drug_name = db.Column(db.String(80), nullable=False)
+    dosage = db.Column(db.String(80), nullable=False)
+    instructions = db.Column(db.String(255), nullable=False)
 
