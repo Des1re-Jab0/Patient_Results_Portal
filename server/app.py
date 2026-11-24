@@ -290,52 +290,52 @@ def list_cases():
     return jsonify({"count": len(cases), "cases": [summary(c) for c in cases], "disclaimer": DISCLAIMER})
 
 
-# @app.get("/cases/<int:case_id>")
-# @auth_required()
-# def get_case(case_id):
-#     case = visible_cases().filter(Case.id == case_id).first()
-#     if not case:
-#         return error("Case not found", 404)  # same answer whether missing or not yours
-#     return jsonify(detail(case, g.user.role))
+@app.get("/cases/<int:case_id>")
+@auth_required()
+def get_case(case_id):
+    case = visible_cases().filter(Case.id == case_id).first()
+    if not case:
+        return error("Case not found", 404)  # same answer whether missing or not yours
+    return jsonify(detail(case, g.user.role))
 
 
-# @app.get("/cases/<int:case_id>/medications")
-# @auth_required("patient", "doctor")
-# def medications(case_id):
-#     case = visible_cases().filter(Case.id == case_id).first()
-#     if not case:
-#         return error("Case not found", 404)
-#     meds = [{"drug": p.drug_name, "dosage": p.dosage, "instructions": p.instructions,
-#              "drug_info": drug_info(p.drug_name)} for p in case.prescriptions]
-#     return jsonify({"case_id": case.id, "medications": meds, "disclaimer": DISCLAIMER})
+@app.get("/cases/<int:case_id>/medications")
+@auth_required("patient", "doctor")
+def medications(case_id):
+    case = visible_cases().filter(Case.id == case_id).first()
+    if not case:
+        return error("Case not found", 404)
+    meds = [{"drug": p.drug_name, "dosage": p.dosage, "instructions": p.instructions,
+             "drug_info": drug_info(p.drug_name)} for p in case.prescriptions]
+    return jsonify({"case_id": case.id, "medications": meds, "disclaimer": DISCLAIMER})
 
 
-# @app.put("/cases/<int:case_id>/conclusion")
-# @auth_required("doctor")
-# def set_conclusion(case_id):
-#     case = db.session.get(Case, case_id)
-#     if not case:
-#         return error("Case not found", 404)
-#     case.conclusion = req_str(body(), "conclusion", 2000)
-#     case.reviewed_by = g.user.id
-#     if case.status == "lab_completed":
-#         case.status = "doctor_reviewed"
-#     db.session.commit()
-#     return jsonify(detail(case, "doctor"))
+@app.put("/cases/<int:case_id>/conclusion")
+@auth_required("doctor")
+def set_conclusion(case_id):
+    case = db.session.get(Case, case_id)
+    if not case:
+        return error("Case not found", 404)
+    case.conclusion = req_str(body(), "conclusion", 2000)
+    case.reviewed_by = g.user.id
+    if case.status == "lab_completed":
+        case.status = "doctor_reviewed"
+    db.session.commit()
+    return jsonify(detail(case, "doctor"))
 
 
-# @app.post("/cases/<int:case_id>/prescriptions")
-# @auth_required("doctor")
-# def add_prescription(case_id):
-#     case = db.session.get(Case, case_id)
-#     if not case:
-#         return error("Case not found", 404)
-#     data = body()
-#     case.prescriptions.append(Prescription(drug_name=req_str(data, "drug_name", 80),
-#                                            dosage=req_str(data, "dosage", 80),
-#                                            instructions=req_str(data, "instructions", 255)))
-#     db.session.commit()
-#     return jsonify(detail(case, "doctor")), 201
+@app.post("/cases/<int:case_id>/prescriptions")
+@auth_required("doctor")
+def add_prescription(case_id):
+    case = db.session.get(Case, case_id)
+    if not case:
+        return error("Case not found", 404)
+    data = body()
+    case.prescriptions.append(Prescription(drug_name=req_str(data, "drug_name", 80),
+                                           dosage=req_str(data, "dosage", 80),
+                                           instructions=req_str(data, "instructions", 255)))
+    db.session.commit()
+    return jsonify(detail(case, "doctor")), 201
 
 
 # @app.post("/cases/<int:case_id>/release")
