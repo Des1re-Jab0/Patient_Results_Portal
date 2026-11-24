@@ -214,20 +214,20 @@ def health():
     return jsonify({"status": "ok", "server": os.getenv("SERVER_NAME", "local")})
 
 
-# @app.post("/auth/login")
-# @limiter.limit("10 per minute")
-# def login():
-#     data = body()
-#     user = User.query.filter_by(username=str(data.get("username", ""))).first()
-#     if not user or not check_password_hash(user.password_hash, str(data.get("password", ""))):
-#         return error("Invalid credentials", 401)
-#     claims = {
-#         "sub": str(user.id),
-#         "role": user.role,
-#         "exp": datetime.now(timezone.utc) + timedelta(hours=1),
-#     }
-#     return jsonify({"token": jwt.encode(claims, SECRET, algorithm="HS256"),
-#                     "role": user.role, "full_name": user.full_name})
+@app.post("/auth/login")
+@limiter.limit("10 per minute")
+def login():
+    data = body()
+    user = User.query.filter_by(username=str(data.get("username", ""))).first()
+    if not user or not check_password_hash(user.password_hash, str(data.get("password", ""))):
+        return error("Invalid credentials", 401)
+    claims = {
+        "sub": str(user.id),
+        "role": user.role,
+        "exp": datetime.now(timezone.utc) + timedelta(hours=1),
+    }
+    return jsonify({"token": jwt.encode(claims, SECRET, algorithm="HS256"),
+                    "role": user.role, "full_name": user.full_name})
 
 
 # @app.post("/cases")
