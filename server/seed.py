@@ -25,38 +25,38 @@ CASES = [
 ]
 
 
-def build(users, patient, tests, conclusion, meds):
-    case = Case(patient_id=users[patient].id, created_by=users["lab1"].id)
-    for name, value, unit, low, high, crit_low, crit_high in tests:
-        flag = flag_for(float(value), float(low), float(high), crit_low, crit_high)
-        case.results.append(LabResult(test_name=name, value=value, unit=unit,
-                                      ref_low=low, ref_high=high, flag=flag))
-    case.critical = any(r.flag == "critical" for r in case.results)
-    if all(r.flag == "normal" for r in case.results):
-        case.status, case.released_at = "released", utcnow()
-    if conclusion:
-        case.conclusion = conclusion
-        case.status, case.released_at = "released", utcnow()
-        case.reviewed_by = users["doctor1"].id
-    for drug, dose, note in meds:
-        case.prescriptions.append(Prescription(drug_name=drug, dosage=dose, instructions=note))
-    return case
+# def build(users, patient, tests, conclusion, meds):
+#     case = Case(patient_id=users[patient].id, created_by=users["lab1"].id)
+#     for name, value, unit, low, high, crit_low, crit_high in tests:
+#         flag = flag_for(float(value), float(low), float(high), crit_low, crit_high)
+#         case.results.append(LabResult(test_name=name, value=value, unit=unit,
+#                                       ref_low=low, ref_high=high, flag=flag))
+#     case.critical = any(r.flag == "critical" for r in case.results)
+#     if all(r.flag == "normal" for r in case.results):
+#         case.status, case.released_at = "released", utcnow()
+#     if conclusion:
+#         case.conclusion = conclusion
+#         case.status, case.released_at = "released", utcnow()
+#         case.reviewed_by = users["doctor1"].id
+#     for drug, dose, note in meds:
+#         case.prescriptions.append(Prescription(drug_name=drug, dosage=dose, instructions=note))
+#     return case
 
 
-with app.app_context():
-    if "--reset" in sys.argv:
-        db.drop_all()
-    db.create_all()
-    if User.query.first():
-        print("Database already seeded. Use --reset to wipe and reseed.")
-        sys.exit(0)
-    users = {}
-    for username, password, role, full_name in ACCOUNTS:
-        users[username] = User(username=username, full_name=full_name, role=role,
-                               password_hash=generate_password_hash(password))
-        db.session.add(users[username])
-    db.session.flush()
-    for patient, tests, conclusion, meds in CASES:
-        db.session.add(build(users, patient, tests, conclusion, meds))
-    db.session.commit()
-    print("Seeded 4 accounts and 4 cases.")
+# with app.app_context():
+#     if "--reset" in sys.argv:
+#         db.drop_all()
+#     db.create_all()
+#     if User.query.first():
+#         print("Database already seeded. Use --reset to wipe and reseed.")
+#         sys.exit(0)
+#     users = {}
+#     for username, password, role, full_name in ACCOUNTS:
+#         users[username] = User(username=username, full_name=full_name, role=role,
+#                                password_hash=generate_password_hash(password))
+#         db.session.add(users[username])
+#     db.session.flush()
+#     for patient, tests, conclusion, meds in CASES:
+#         db.session.add(build(users, patient, tests, conclusion, meds))
+#     db.session.commit()
+#     print("Seeded 4 accounts and 4 cases.")
