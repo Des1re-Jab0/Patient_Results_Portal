@@ -44,19 +44,19 @@ DISCLAIMER = (
 CRITICAL_NOTICE = "CRITICAL RESULT: contact the hospital immediately. Do not wait for an appointment."
 STATUSES = ("lab_completed", "doctor_reviewed", "released")
 
-# app = Flask(__name__)
-# app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)  # real client IP behind the load balancer
-# app.config["SECRET_KEY"] = SECRET
-# app.config["SQLALCHEMY_DATABASE_URI"] = database_url()
-# db.init_app(app)
-# limiter = Limiter(get_remote_address, app=app, default_limits=["200 per hour"], storage_uri="memory://")
+app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)  # real client IP behind the load balancer
+app.config["SECRET_KEY"] = SECRET
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url()
+db.init_app(app)
+limiter = Limiter(get_remote_address, app=app, default_limits=["200 per hour"], storage_uri="memory://")
 
 
-# @app.after_request
-# def add_headers(resp):
-#     resp.headers["X-Served-By"] = os.getenv("SERVER_NAME", "local")  # proves load balancing
-#     resp.headers["Cache-Control"] = "no-store"
-#     return resp
+@app.after_request
+def add_headers(resp):
+    resp.headers["X-Served-By"] = os.getenv("SERVER_NAME", "local")  # proves load balancing
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
 
 
 # def error(message, code):
