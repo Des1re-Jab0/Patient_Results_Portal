@@ -59,33 +59,33 @@ def add_headers(resp):
     return resp
 
 
-# def error(message, code):
-#     return jsonify({"error": message}), code
+def error(message, code):
+    return jsonify({"error": message}), code
 
 
-# @app.errorhandler(ValueError)
-# def bad_input(exc):
-#     return error(str(exc), 400)
+@app.errorhandler(ValueError)
+def bad_input(exc):
+    return error(str(exc), 400)
 
 
-# @app.errorhandler(404)
-# def not_found(_):
-#     return error("Not found", 404)
+@app.errorhandler(404)
+def not_found(_):
+    return error("Not found", 404)
 
 
-# @app.errorhandler(405)
-# def not_allowed(_):
-#     return error("Method not allowed", 405)
+@app.errorhandler(405)
+def not_allowed(_):
+    return error("Method not allowed", 405)
 
 
-# @app.errorhandler(429)
-# def too_many(_):
-#     return error("Too many requests, please slow down", 429)
+@app.errorhandler(429)
+def too_many(_):
+    return error("Too many requests, please slow down", 429)
 
 
-# @app.errorhandler(500)
-# def server_error(_):
-#     return error("Internal server error", 500)
+@app.errorhandler(500)
+def server_error(_):
+    return error("Internal server error", 500)
 
 
 # # ---------- helpers ----------
