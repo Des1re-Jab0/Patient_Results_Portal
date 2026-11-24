@@ -203,15 +203,15 @@ def visible_cases():
     return query
 
 
-# # ---------- routes ----------
-# @app.get("/health")
-# @limiter.exempt
-# def health():
-#     try:
-#         db.session.execute(sql_text("SELECT 1"))
-#     except Exception:
-#         return jsonify({"status": "db_unavailable"}), 503
-#     return jsonify({"status": "ok", "server": os.getenv("SERVER_NAME", "local")})
+# ---------- routes ----------
+@app.get("/health")
+@limiter.exempt
+def health():
+    try:
+        db.session.execute(sql_text("SELECT 1"))
+    except Exception:
+        return jsonify({"status": "db_unavailable"}), 503
+    return jsonify({"status": "ok", "server": os.getenv("SERVER_NAME", "local")})
 
 
 # @app.post("/auth/login")
