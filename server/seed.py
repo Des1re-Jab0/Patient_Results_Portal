@@ -43,20 +43,20 @@ def build(users, patient, tests, conclusion, meds):
     return case
 
 
-# with app.app_context():
-#     if "--reset" in sys.argv:
-#         db.drop_all()
-#     db.create_all()
-#     if User.query.first():
-#         print("Database already seeded. Use --reset to wipe and reseed.")
-#         sys.exit(0)
-#     users = {}
-#     for username, password, role, full_name in ACCOUNTS:
-#         users[username] = User(username=username, full_name=full_name, role=role,
-#                                password_hash=generate_password_hash(password))
-#         db.session.add(users[username])
-#     db.session.flush()
-#     for patient, tests, conclusion, meds in CASES:
-#         db.session.add(build(users, patient, tests, conclusion, meds))
-#     db.session.commit()
-#     print("Seeded 4 accounts and 4 cases.")
+with app.app_context():
+    if "--reset" in sys.argv:
+        db.drop_all()
+    db.create_all()
+    if User.query.first():
+        print("Database already seeded. Use --reset to wipe and reseed.")
+        sys.exit(0)
+    users = {}
+    for username, password, role, full_name in ACCOUNTS:
+        users[username] = User(username=username, full_name=full_name, role=role,
+                               password_hash=generate_password_hash(password))
+        db.session.add(users[username])
+    db.session.flush()
+    for patient, tests, conclusion, meds in CASES:
+        db.session.add(build(users, patient, tests, conclusion, meds))
+    db.session.commit()
+    print("Seeded 4 accounts and 4 cases.")
