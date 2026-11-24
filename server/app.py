@@ -145,20 +145,20 @@ def parse_date(value):
         raise ValueError("dates must use YYYY-MM-DD")
 
 
-# def flag_for(value, low, high, crit_low, crit_high):
-#     if crit_low is not None and value <= crit_low:
-#         return "critical"
-#     if crit_high is not None and value >= crit_high:
-#         return "critical"
-#     if value < low:
-#         return "low"
-#     if value > high:
-#         return "high"
-#     return "normal"
+def flag_for(value, low, high, crit_low, crit_high):
+    if crit_low is not None and value <= crit_low:
+        return "critical"
+    if crit_high is not None and value >= crit_high:
+        return "critical"
+    if value < low:
+        return "low"
+    if value > high:
+        return "high"
+    return "normal"
 
 
-# def iso(value):
-#     return value.isoformat() if value else None
+def iso(value):
+    return value.isoformat() if value else None
 
 
 # def summary(case):
