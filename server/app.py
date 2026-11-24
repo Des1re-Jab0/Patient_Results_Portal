@@ -261,33 +261,33 @@ def create_case():
     return jsonify(out), 201
 
 
-# @app.get("/cases")
-# @auth_required()
-# def list_cases():
-#     query = visible_cases()
-#     status = request.args.get("status")
-#     if status:
-#         if status not in STATUSES:
-#             raise ValueError("status must be one of: " + ", ".join(STATUSES))
-#         query = query.filter(Case.status == status)
-#     term = request.args.get("q", "").strip()[:50]
-#     if term:
-#         query = query.filter(or_(
-#             User.full_name.icontains(term, autoescape=True),
-#             Case.results.any(LabResult.test_name.icontains(term, autoescape=True)),
-#         ))
-#     start, end = parse_date(request.args.get("from")), parse_date(request.args.get("to"))
-#     if start:
-#         query = query.filter(Case.created_at >= start)
-#     if end:
-#         query = query.filter(Case.created_at < end + timedelta(days=1))
-#     columns = {"date": Case.created_at, "patient": User.full_name, "status": Case.status}
-#     sort = request.args.get("sort", "date")
-#     if sort not in columns:
-#         raise ValueError("sort must be one of: " + ", ".join(columns))
-#     order = columns[sort].asc() if request.args.get("order") == "asc" else columns[sort].desc()
-#     cases = query.order_by(order).limit(100).all()
-#     return jsonify({"count": len(cases), "cases": [summary(c) for c in cases], "disclaimer": DISCLAIMER})
+@app.get("/cases")
+@auth_required()
+def list_cases():
+    query = visible_cases()
+    status = request.args.get("status")
+    if status:
+        if status not in STATUSES:
+            raise ValueError("status must be one of: " + ", ".join(STATUSES))
+        query = query.filter(Case.status == status)
+    term = request.args.get("q", "").strip()[:50]
+    if term:
+        query = query.filter(or_(
+            User.full_name.icontains(term, autoescape=True),
+            Case.results.any(LabResult.test_name.icontains(term, autoescape=True)),
+        ))
+    start, end = parse_date(request.args.get("from")), parse_date(request.args.get("to"))
+    if start:
+        query = query.filter(Case.created_at >= start)
+    if end:
+        query = query.filter(Case.created_at < end + timedelta(days=1))
+    columns = {"date": Case.created_at, "patient": User.full_name, "status": Case.status}
+    sort = request.args.get("sort", "date")
+    if sort not in columns:
+        raise ValueError("sort must be one of: " + ", ".join(columns))
+    order = columns[sort].asc() if request.args.get("order") == "asc" else columns[sort].desc()
+    cases = query.order_by(order).limit(100).all()
+    return jsonify({"count": len(cases), "cases": [summary(c) for c in cases], "disclaimer": DISCLAIMER})
 
 
 # @app.get("/cases/<int:case_id>")
