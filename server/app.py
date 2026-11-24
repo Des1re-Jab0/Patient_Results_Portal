@@ -161,46 +161,46 @@ def iso(value):
     return value.isoformat() if value else None
 
 
-# def summary(case):
-#     out = {
-#         "id": case.id,
-#         "patient": case.patient.full_name,
-#         "status": case.status,
-#         "created_at": iso(case.created_at),
-#         "tests": len(case.results),
-#         "abnormal": sum(1 for r in case.results if r.flag != "normal"),
-#     }
-#     if case.critical:
-#         out["critical"] = True
-#     return out
+def summary(case):
+    out = {
+        "id": case.id,
+        "patient": case.patient.full_name,
+        "status": case.status,
+        "created_at": iso(case.created_at),
+        "tests": len(case.results),
+        "abnormal": sum(1 for r in case.results if r.flag != "normal"),
+    }
+    if case.critical:
+        out["critical"] = True
+    return out
 
 
-# def detail(case, role):
-#     out = summary(case)
-#     out["disclaimer"] = DISCLAIMER
-#     out["results"] = [
-#         {"test": r.test_name, "value": r.value, "unit": r.unit,
-#          "range": f"{r.ref_low}-{r.ref_high}", "flag": r.flag}
-#         for r in case.results
-#     ]
-#     if case.critical:
-#         out["notice"] = CRITICAL_NOTICE
-#     if role != "lab":  # lab technicians never see clinical conclusions
-#         out["conclusion"] = case.conclusion
-#         out["released_at"] = iso(case.released_at)
-#         out["prescriptions"] = [
-#             {"drug": p.drug_name, "dosage": p.dosage, "instructions": p.instructions}
-#             for p in case.prescriptions
-#         ]
-#     return out
+def detail(case, role):
+    out = summary(case)
+    out["disclaimer"] = DISCLAIMER
+    out["results"] = [
+        {"test": r.test_name, "value": r.value, "unit": r.unit,
+         "range": f"{r.ref_low}-{r.ref_high}", "flag": r.flag}
+        for r in case.results
+    ]
+    if case.critical:
+        out["notice"] = CRITICAL_NOTICE
+    if role != "lab":  # lab technicians never see clinical conclusions
+        out["conclusion"] = case.conclusion
+        out["released_at"] = iso(case.released_at)
+        out["prescriptions"] = [
+            {"drug": p.drug_name, "dosage": p.dosage, "instructions": p.instructions}
+            for p in case.prescriptions
+        ]
+    return out
 
 
-# def visible_cases():
-#     """Patients only ever see their own RELEASED cases."""
-#     query = Case.query.join(User, Case.patient_id == User.id)
-#     if g.user.role == "patient":
-#         query = query.filter(Case.patient_id == g.user.id, Case.status == "released")
-#     return query
+def visible_cases():
+    """Patients only ever see their own RELEASED cases."""
+    query = Case.query.join(User, Case.patient_id == User.id)
+    if g.user.role == "patient":
+        query = query.filter(Case.patient_id == g.user.id, Case.status == "released")
+    return query
 
 
 # # ---------- routes ----------
