@@ -36,16 +36,16 @@ class Case(db.Model):
     prescriptions = db.relationship("Prescription", backref="case", cascade="all, delete-orphan")
 
 
-# class LabResult(db.Model):
-#     __tablename__ = "lab_results"
-#     id = db.Column(db.Integer, primary_key=True)
-#     case_id = db.Column(db.Integer, db.ForeignKey("cases.id"), nullable=False)
-#     test_name = db.Column(db.String(80), nullable=False)
-#     value = db.Column(db.Float, nullable=False)
-#     unit = db.Column(db.String(20), nullable=False)
-#     ref_low = db.Column(db.Float, nullable=False)
-#     ref_high = db.Column(db.Float, nullable=False)
-#     flag = db.Column(db.String(10), nullable=False)  # normal | low | high | critical
+class LabResult(db.Model):
+    __tablename__ = "lab_results"
+    id = db.Column(db.Integer, primary_key=True)
+    case_id = db.Column(db.Integer, db.ForeignKey("cases.id"), nullable=False)
+    test_name = db.Column(db.String(80), nullable=False)
+    value = db.Column(db.Float, nullable=False)
+    unit = db.Column(db.String(20), nullable=False)
+    ref_low = db.Column(db.Float, nullable=False)
+    ref_high = db.Column(db.Float, nullable=False)
+    flag = db.Column(db.String(10), nullable=False)  # normal | low | high | critical
 
 
 # class Prescription(db.Model):
