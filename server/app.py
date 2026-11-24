@@ -88,28 +88,28 @@ def server_error(_):
     return error("Internal server error", 500)
 
 
-# # ---------- helpers ----------
-# def auth_required(*roles):
-#     """Require a valid Bearer token, optionally restricted to given roles."""
-#     def wrapper(fn):
-#         @wraps(fn)
-#         def inner(*args, **kwargs):
-#             header = request.headers.get("Authorization", "")
-#             if not header.startswith("Bearer "):
-#                 return error("Missing token", 401)
-#             try:
-#                 data = jwt.decode(header[7:], SECRET, algorithms=["HS256"])
-#                 user = db.session.get(User, int(data["sub"]))
-#             except (jwt.InvalidTokenError, KeyError, ValueError, TypeError):
-#                 return error("Invalid or expired token", 401)
-#             if user is None:
-#                 return error("Invalid or expired token", 401)
-#             if roles and user.role not in roles:
-#                 return error("Forbidden for your role", 403)
-#             g.user = user
-#             return fn(*args, **kwargs)
-#         return inner
-#     return wrapper
+# ---------- helpers ----------
+def auth_required(*roles):
+    """Require a valid Bearer token, optionally restricted to given roles."""
+    def wrapper(fn):
+        @wraps(fn)
+        def inner(*args, **kwargs):
+            header = request.headers.get("Authorization", "")
+            if not header.startswith("Bearer "):
+                return error("Missing token", 401)
+            try:
+                data = jwt.decode(header[7:], SECRET, algorithms=["HS256"])
+                user = db.session.get(User, int(data["sub"]))
+            except (jwt.InvalidTokenError, KeyError, ValueError, TypeError):
+                return error("Invalid or expired token", 401)
+            if user is None:
+                return error("Invalid or expired token", 401)
+            if roles and user.role not in roles:
+                return error("Forbidden for your role", 403)
+            g.user = user
+            return fn(*args, **kwargs)
+        return inner
+    return wrapper
 
 
 # def body():
