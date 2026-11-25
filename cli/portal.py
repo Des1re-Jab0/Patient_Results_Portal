@@ -154,44 +154,44 @@ def footer(data, server):
     served(server)
 
 
-# # ---------- talking to the API ----------
-# def call(method, path, payload=None, params=None, auth=True):
-#     """Send a request; turn every failure into a readable message."""
-#     headers = {}
-#     if auth:
-#         if not TOKEN_FILE.exists():
-#             die("You are not logged in. Run: portal.py login <username>")
-#         headers["Authorization"] = "Bearer " + TOKEN_FILE.read_text().strip()
-#     try:
-#         resp = requests.request(method, BASE_URL + path, json=payload, params=params,
-#                                 headers=headers, timeout=TIMEOUT)
-#     except requests.RequestException:
-#         die("Cannot reach the server at " + BASE_URL + ". Check PORTAL_URL and your connection.")
-#     try:
-#         data = resp.json()
-#     except ValueError:
-#         die("Unexpected server response (HTTP " + str(resp.status_code) + ").")
-#     if resp.status_code == 401 and auth:
-#         die("Session expired or invalid. Please log in again.")
-#     if resp.status_code >= 400:
-#         die(data.get("error", "Request failed") + " (HTTP " + str(resp.status_code) + ")")
-#     return data, resp.headers.get("X-Served-By", "?")
+# ---------- talking to the API ----------
+def call(method, path, payload=None, params=None, auth=True):
+    """Send a request; turn every failure into a readable message."""
+    headers = {}
+    if auth:
+        if not TOKEN_FILE.exists():
+            die("You are not logged in. Run: portal.py login <username>")
+        headers["Authorization"] = "Bearer " + TOKEN_FILE.read_text().strip()
+    try:
+        resp = requests.request(method, BASE_URL + path, json=payload, params=params,
+                                headers=headers, timeout=TIMEOUT)
+    except requests.RequestException:
+        die("Cannot reach the server at " + BASE_URL + ". Check PORTAL_URL and your connection.")
+    try:
+        data = resp.json()
+    except ValueError:
+        die("Unexpected server response (HTTP " + str(resp.status_code) + ").")
+    if resp.status_code == 401 and auth:
+        die("Session expired or invalid. Please log in again.")
+    if resp.status_code >= 400:
+        die(data.get("error", "Request failed") + " (HTTP " + str(resp.status_code) + ")")
+    return data, resp.headers.get("X-Served-By", "?")
 
 
-# # ---------- commands ----------
-# def cmd_login(args):
-#     password = getpass.getpass("Password: ")
-#     data, server = call("POST", "/auth/login", {"username": args.username, "password": password}, auth=False)
-#     TOKEN_FILE.write_text(data["token"])
-#     TOKEN_FILE.chmod(0o600)
-#     print(paint(symbol("\u2713", "OK") + " Logged in as ", "green") + paint(clean(data["full_name"]), "bold", "green")
-#           + paint(" (" + clean(data["role"]) + ")", "cyan"))
-#     served(server)
+# ---------- commands ----------
+def cmd_login(args):
+    password = getpass.getpass("Password: ")
+    data, server = call("POST", "/auth/login", {"username": args.username, "password": password}, auth=False)
+    TOKEN_FILE.write_text(data["token"])
+    TOKEN_FILE.chmod(0o600)
+    print(paint(symbol("\u2713", "OK") + " Logged in as ", "green") + paint(clean(data["full_name"]), "bold", "green")
+          + paint(" (" + clean(data["role"]) + ")", "cyan"))
+    served(server)
 
 
-# def cmd_logout(_):
-#     TOKEN_FILE.unlink(missing_ok=True)
-#     ok("Logged out.")
+def cmd_logout(_):
+    TOKEN_FILE.unlink(missing_ok=True)
+    ok("Logged out.")
 
 
 # def cmd_list(args):
