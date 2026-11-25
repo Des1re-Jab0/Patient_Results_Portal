@@ -25,53 +25,53 @@ FLAG_STYLE = {"NORMAL": ("green",), "HIGH": ("bold", "yellow"), "LOW": ("bold", 
 VALUE_STYLE = {"HIGH": ("bold", "yellow"), "LOW": ("bold", "cyan"), "CRITICAL": ("bold", "red")}
 
 
-# # ---------- colour and text helpers ----------
-# def enable_windows_ansi(handle_id):
-#     """Turn on ANSI colour support for a Windows console handle. Returns True on success."""
-#     if os.name != "nt":
-#         return True
-#     try:
-#         kernel32 = ctypes.windll.kernel32
-#         kernel32.GetStdHandle.restype = ctypes.c_void_p
-#         kernel32.GetConsoleMode.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_uint32)]
-#         kernel32.SetConsoleMode.argtypes = [ctypes.c_void_p, ctypes.c_uint32]
-#         handle = kernel32.GetStdHandle(handle_id)
-#         mode = ctypes.c_uint32()
-#         if not kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
-#             return False
-#         return bool(kernel32.SetConsoleMode(handle, mode.value | 0x0004))
-#     except (AttributeError, OSError):
-#         return False
+# ---------- colour and text helpers ----------
+def enable_windows_ansi(handle_id):
+    """Turn on ANSI colour support for a Windows console handle. Returns True on success."""
+    if os.name != "nt":
+        return True
+    try:
+        kernel32 = ctypes.windll.kernel32
+        kernel32.GetStdHandle.restype = ctypes.c_void_p
+        kernel32.GetConsoleMode.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_uint32)]
+        kernel32.SetConsoleMode.argtypes = [ctypes.c_void_p, ctypes.c_uint32]
+        handle = kernel32.GetStdHandle(handle_id)
+        mode = ctypes.c_uint32()
+        if not kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
+            return False
+        return bool(kernel32.SetConsoleMode(handle, mode.value | 0x0004))
+    except (AttributeError, OSError):
+        return False
 
 
-# def init_color(disabled=False):
-#     """Colours are on in a terminal. Off for --no-color, NO_COLOR, pipes and dumb terminals."""
-#     if disabled or os.getenv("NO_COLOR") or os.getenv("TERM") == "dumb":
-#         COLOR["out"] = COLOR["err"] = False
-#         return
-#     forced = bool(os.getenv("FORCE_COLOR"))
-#     COLOR["out"] = (forced or sys.stdout.isatty()) and enable_windows_ansi(-11)
-#     COLOR["err"] = (forced or sys.stderr.isatty()) and enable_windows_ansi(-12)
+def init_color(disabled=False):
+    """Colours are on in a terminal. Off for --no-color, NO_COLOR, pipes and dumb terminals."""
+    if disabled or os.getenv("NO_COLOR") or os.getenv("TERM") == "dumb":
+        COLOR["out"] = COLOR["err"] = False
+        return
+    forced = bool(os.getenv("FORCE_COLOR"))
+    COLOR["out"] = (forced or sys.stdout.isatty()) and enable_windows_ansi(-11)
+    COLOR["err"] = (forced or sys.stderr.isatty()) and enable_windows_ansi(-12)
 
 
-# def paint(text, *styles, err=False):
-#     if not COLOR["err" if err else "out"] or not styles:
-#         return text
-#     return "\033[" + ";".join(CODES[s] for s in styles) + "m" + text + "\033[0m"
+def paint(text, *styles, err=False):
+    if not COLOR["err" if err else "out"] or not styles:
+        return text
+    return "\033[" + ";".join(CODES[s] for s in styles) + "m" + text + "\033[0m"
 
 
-# def symbol(preferred, fallback):
-#     """Use a Unicode symbol only if the output encoding can show it."""
-#     try:
-#         preferred.encode(sys.stdout.encoding or "ascii")
-#         return preferred
-#     except (UnicodeEncodeError, LookupError):
-#         return fallback
+def symbol(preferred, fallback):
+    """Use a Unicode symbol only if the output encoding can show it."""
+    try:
+        preferred.encode(sys.stdout.encoding or "ascii")
+        return preferred
+    except (UnicodeEncodeError, LookupError):
+        return fallback
 
 
-# def clean(value):
-#     """Remove control characters (such as terminal escape codes) from text sent by the server."""
-#     return "".join(ch if ch.isprintable() else (" " if ch in "\r\n\t" else "") for ch in str(value))
+def clean(value):
+    """Remove control characters (such as terminal escape codes) from text sent by the server."""
+    return "".join(ch if ch.isprintable() else (" " if ch in "\r\n\t" else "") for ch in str(value))
 
 
 # def die(message):
