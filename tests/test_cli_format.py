@@ -58,14 +58,14 @@ portal.init_color(True)
 check("--no-color turns colours off", portal.COLOR["out"] is False)
 del os.environ["FORCE_COLOR"]
 
-# print("--- table layout ---")
-# for label, on in (("colour off", False), ("colour on", True)):
-#     set_color(on)
-#     for name, rows, headers, style in (("case list", ROWS, HEADERS, portal.list_style),
-#                                        ("result table", RESULT_ROWS, RESULT_HEADERS, portal.result_style)):
-#         lines = [ANSI.sub("", line) for line in capture(portal.table, rows, headers, style).splitlines()]
-#         body = [line for line in lines if not set(line) <= {"-"}]
-#         check(name + " columns stay aligned (" + label + ")", len({len(line) for line in body}) == 1, [len(x) for x in body])
+print("--- table layout ---")
+for label, on in (("colour off", False), ("colour on", True)):
+    set_color(on)
+    for name, rows, headers, style in (("case list", ROWS, HEADERS, portal.list_style),
+                                       ("result table", RESULT_ROWS, RESULT_HEADERS, portal.result_style)):
+        lines = [ANSI.sub("", line) for line in capture(portal.table, rows, headers, style).splitlines()]
+        body = [line for line in lines if not set(line) <= {"-"}]
+        check(name + " columns stay aligned (" + label + ")", len({len(line) for line in body}) == 1, [len(x) for x in body])
 
 # print("--- colours carry meaning ---")
 # set_color(True)
