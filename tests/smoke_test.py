@@ -115,29 +115,29 @@ shown = client.get(url, headers=auth(patient2)).get_json()
 check("patient2 now sees the CRITICAL notice", "CRITICAL" in shown.get("notice", ""))
 check("patient1 cannot read patient2's case (404)", client.get(url, headers=auth(patient1)).status_code == 404)
 
-# print("--- openFDA integration (network is mocked) ---")
-# fda = {"results": [{"purpose": ["Test purpose"], "warnings": ["Test warning"]}]}
-# openfda._cache.clear()
-# with mock.patch("server.openfda.requests.get", return_value=FakeResponse(200, fda)) as fake_get:
-#     meds = client.get("/cases/2/medications", headers=auth(patient1)).get_json()["medications"][0]["drug_info"]
-#     check("drug info is parsed from the openFDA format", meds["available"] and meds["purpose"] == "Test purpose" and meds["warnings"] == "Test warning", meds)
-#     client.get("/cases/2/medications", headers=auth(patient1))
-#     check("second lookup is served from the cache", fake_get.call_count == 1, fake_get.call_count)
-# openfda._cache.clear()
-# with mock.patch("server.openfda.requests.get", return_value=FakeResponse(404, {})):
-#     info = client.get("/cases/2/medications", headers=auth(patient1)).get_json()["medications"][0]["drug_info"]
-#     check("unknown drug gives a clear message", not info["available"] and "No FDA label" in info["reason"], info)
-# openfda._cache.clear()
-# import requests  # noqa: E402
-# with mock.patch("server.openfda.requests.get", side_effect=requests.ConnectionError("down")):
-#     resp = client.get("/cases/2/medications", headers=auth(patient1))
-#     info = resp.get_json()["medications"][0]["drug_info"]
-#     check("API outage does not crash the app", resp.status_code == 200 and not info["available"] and "unavailable" in info["reason"], info)
-# openfda._cache.clear()
-# with mock.patch("server.openfda.requests.get", return_value=FakeResponse(429, {})):
-#     info = client.get("/cases/2/medications", headers=auth(patient1)).get_json()["medications"][0]["drug_info"]
-#     check("openFDA rate limit (429) is handled", not info["available"] and "429" in info["reason"], info)
-# check("patient1 cannot read medications of someone else's case (404)", client.get(url + "/medications", headers=auth(patient1)).status_code == 404)
+print("--- openFDA integration (network is mocked) ---")
+fda = {"results": [{"purpose": ["Test purpose"], "warnings": ["Test warning"]}]}
+openfda._cache.clear()
+with mock.patch("server.openfda.requests.get", return_value=FakeResponse(200, fda)) as fake_get:
+    meds = client.get("/cases/2/medications", headers=auth(patient1)).get_json()["medications"][0]["drug_info"]
+    check("drug info is parsed from the openFDA format", meds["available"] and meds["purpose"] == "Test purpose" and meds["warnings"] == "Test warning", meds)
+    client.get("/cases/2/medications", headers=auth(patient1))
+    check("second lookup is served from the cache", fake_get.call_count == 1, fake_get.call_count)
+openfda._cache.clear()
+with mock.patch("server.openfda.requests.get", return_value=FakeResponse(404, {})):
+    info = client.get("/cases/2/medications", headers=auth(patient1)).get_json()["medications"][0]["drug_info"]
+    check("unknown drug gives a clear message", not info["available"] and "No FDA label" in info["reason"], info)
+openfda._cache.clear()
+import requests  # noqa: E402
+with mock.patch("server.openfda.requests.get", side_effect=requests.ConnectionError("down")):
+    resp = client.get("/cases/2/medications", headers=auth(patient1))
+    info = resp.get_json()["medications"][0]["drug_info"]
+    check("API outage does not crash the app", resp.status_code == 200 and not info["available"] and "unavailable" in info["reason"], info)
+openfda._cache.clear()
+with mock.patch("server.openfda.requests.get", return_value=FakeResponse(429, {})):
+    info = client.get("/cases/2/medications", headers=auth(patient1)).get_json()["medications"][0]["drug_info"]
+    check("openFDA rate limit (429) is handled", not info["available"] and "429" in info["reason"], info)
+check("patient1 cannot read medications of someone else's case (404)", client.get(url + "/medications", headers=auth(patient1)).status_code == 404)
 
 # print("--- login rate limit (last, because it blocks further logins) ---")
 # codes = [client.post("/auth/login", json={"username": "x", "password": "y"}).status_code for _ in range(12)]
