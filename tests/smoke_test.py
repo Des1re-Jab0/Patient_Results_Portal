@@ -73,20 +73,20 @@ check("case 2 shows the doctor conclusion and Metformin",
 check("unreleased case 3 is hidden from patient1 (404)", client.get("/cases/3", headers=auth(patient1)).status_code == 404)
 check("patient2 sees nothing yet", client.get("/cases", headers=auth(patient2)).get_json()["count"] == 0)
 
-# print("--- search, filter, sort and validation ---")
-# check("search glucose finds 1 case", client.get("/cases?q=glucose", headers=auth(patient1)).get_json()["count"] == 1)
-# check("search with SQL injection text finds nothing",
-#       client.get("/cases?q=%27+OR+1%3D1+--", headers=auth(patient1)).get_json()["count"] == 0)
-# check("percent sign is not a wildcard", client.get("/cases?q=%25", headers=auth(patient1)).get_json()["count"] == 0)
-# check("status filter works", client.get("/cases?status=released", headers=auth(patient1)).get_json()["count"] == 2)
-# check("sort ascending works", client.get("/cases?sort=date&order=asc", headers=auth(patient1)).status_code == 200)
-# check("unknown sort column is rejected (400)", client.get("/cases?sort=password_hash", headers=auth(patient1)).status_code == 400)
-# check("bad date is rejected (400)", client.get("/cases?from=notadate", headers=auth(patient1)).status_code == 400)
+print("--- search, filter, sort and validation ---")
+check("search glucose finds 1 case", client.get("/cases?q=glucose", headers=auth(patient1)).get_json()["count"] == 1)
+check("search with SQL injection text finds nothing",
+      client.get("/cases?q=%27+OR+1%3D1+--", headers=auth(patient1)).get_json()["count"] == 0)
+check("percent sign is not a wildcard", client.get("/cases?q=%25", headers=auth(patient1)).get_json()["count"] == 0)
+check("status filter works", client.get("/cases?status=released", headers=auth(patient1)).get_json()["count"] == 2)
+check("sort ascending works", client.get("/cases?sort=date&order=asc", headers=auth(patient1)).status_code == 200)
+check("unknown sort column is rejected (400)", client.get("/cases?sort=password_hash", headers=auth(patient1)).status_code == 400)
+check("bad date is rejected (400)", client.get("/cases?from=notadate", headers=auth(patient1)).status_code == 400)
 
-# print("--- roles ---")
-# check("patient cannot upload results (403)", client.post("/cases", headers=auth(patient1), json={}).status_code == 403)
-# check("lab cannot release a case (403)", client.post("/cases/3/release", headers=auth(lab)).status_code == 403)
-# check("lab sees no conclusion field", "conclusion" not in client.get("/cases/2", headers=auth(lab)).get_json())
+print("--- roles ---")
+check("patient cannot upload results (403)", client.post("/cases", headers=auth(patient1), json={}).status_code == 403)
+check("lab cannot release a case (403)", client.post("/cases/3/release", headers=auth(lab)).status_code == 403)
+check("lab sees no conclusion field", "conclusion" not in client.get("/cases/2", headers=auth(lab)).get_json())
 
 # print("--- lab upload and hybrid release rule ---")
 # normal = client.post("/cases", headers=auth(lab), json={"patient_username": "patient1", "results": [
