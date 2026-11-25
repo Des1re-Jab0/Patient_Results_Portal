@@ -88,32 +88,32 @@ check("patient cannot upload results (403)", client.post("/cases", headers=auth(
 check("lab cannot release a case (403)", client.post("/cases/3/release", headers=auth(lab)).status_code == 403)
 check("lab sees no conclusion field", "conclusion" not in client.get("/cases/2", headers=auth(lab)).get_json())
 
-# print("--- lab upload and hybrid release rule ---")
-# normal = client.post("/cases", headers=auth(lab), json={"patient_username": "patient1", "results": [
-#     {"test_name": "Sodium", "value": 140, "unit": "mmol/L", "ref_low": 135, "ref_high": 145}]})
-# check("normal upload is released automatically", normal.status_code == 201 and normal.get_json()["status"] == "released")
-# critical = client.post("/cases", headers=auth(lab), json={"patient_username": "patient2", "results": [
-#     {"test_name": "Hemoglobin", "value": 6.1, "unit": "g/dL", "ref_low": 12, "ref_high": 16, "crit_low": 7, "crit_high": 20}]})
-# crit_id = critical.get_json()["id"]
-# check("critical upload waits for the doctor",
-#       critical.status_code == 201 and critical.get_json()["status"] == "lab_completed" and critical.get_json()["critical"])
-# check("patient2 cannot see the unreleased critical case", client.get("/cases/" + str(crit_id), headers=auth(patient2)).status_code == 404)
-# check("NaN value is rejected (400)", client.post("/cases", headers=auth(lab), data='{"patient_username":"patient1","results":[{"test_name":"a","value":NaN,"unit":"u","ref_low":0,"ref_high":1}]}', content_type="application/json").status_code == 400)
-# check("ref_low above ref_high is rejected (400)", client.post("/cases", headers=auth(lab), json={"patient_username": "patient1", "results": [
-#     {"test_name": "a", "value": 1, "unit": "u", "ref_low": 5, "ref_high": 1}]}).status_code == 400)
-# check("non-JSON body is rejected (400)", client.post("/cases", headers=auth(lab), data="garbage", content_type="application/json").status_code == 400)
+print("--- lab upload and hybrid release rule ---")
+normal = client.post("/cases", headers=auth(lab), json={"patient_username": "patient1", "results": [
+    {"test_name": "Sodium", "value": 140, "unit": "mmol/L", "ref_low": 135, "ref_high": 145}]})
+check("normal upload is released automatically", normal.status_code == 201 and normal.get_json()["status"] == "released")
+critical = client.post("/cases", headers=auth(lab), json={"patient_username": "patient2", "results": [
+    {"test_name": "Hemoglobin", "value": 6.1, "unit": "g/dL", "ref_low": 12, "ref_high": 16, "crit_low": 7, "crit_high": 20}]})
+crit_id = critical.get_json()["id"]
+check("critical upload waits for the doctor",
+      critical.status_code == 201 and critical.get_json()["status"] == "lab_completed" and critical.get_json()["critical"])
+check("patient2 cannot see the unreleased critical case", client.get("/cases/" + str(crit_id), headers=auth(patient2)).status_code == 404)
+check("NaN value is rejected (400)", client.post("/cases", headers=auth(lab), data='{"patient_username":"patient1","results":[{"test_name":"a","value":NaN,"unit":"u","ref_low":0,"ref_high":1}]}', content_type="application/json").status_code == 400)
+check("ref_low above ref_high is rejected (400)", client.post("/cases", headers=auth(lab), json={"patient_username": "patient1", "results": [
+    {"test_name": "a", "value": 1, "unit": "u", "ref_low": 5, "ref_high": 1}]}).status_code == 400)
+check("non-JSON body is rejected (400)", client.post("/cases", headers=auth(lab), data="garbage", content_type="application/json").status_code == 400)
 
-# print("--- doctor workflow and the critical notice ---")
-# url = "/cases/" + str(crit_id)
-# check("release without a conclusion is refused (400)", client.post(url + "/release", headers=auth(doctor)).status_code == 400)
-# check("oversized conclusion is rejected (400)", client.put(url + "/conclusion", headers=auth(doctor), json={"conclusion": "x" * 2001}).status_code == 400)
-# check("doctor saves a conclusion", client.put(url + "/conclusion", headers=auth(doctor), json={"conclusion": "Severe anaemia. Attend hospital now."}).get_json()["status"] == "doctor_reviewed")
-# check("doctor adds a prescription", client.post(url + "/prescriptions", headers=auth(doctor), json={"drug_name": "Ferrous sulfate", "dosage": "200 mg", "instructions": "Once daily"}).status_code == 201)
-# check("doctor releases the case", client.post(url + "/release", headers=auth(doctor)).get_json()["status"] == "released")
-# check("releasing twice is refused (409)", client.post(url + "/release", headers=auth(doctor)).status_code == 409)
-# shown = client.get(url, headers=auth(patient2)).get_json()
-# check("patient2 now sees the CRITICAL notice", "CRITICAL" in shown.get("notice", ""))
-# check("patient1 cannot read patient2's case (404)", client.get(url, headers=auth(patient1)).status_code == 404)
+print("--- doctor workflow and the critical notice ---")
+url = "/cases/" + str(crit_id)
+check("release without a conclusion is refused (400)", client.post(url + "/release", headers=auth(doctor)).status_code == 400)
+check("oversized conclusion is rejected (400)", client.put(url + "/conclusion", headers=auth(doctor), json={"conclusion": "x" * 2001}).status_code == 400)
+check("doctor saves a conclusion", client.put(url + "/conclusion", headers=auth(doctor), json={"conclusion": "Severe anaemia. Attend hospital now."}).get_json()["status"] == "doctor_reviewed")
+check("doctor adds a prescription", client.post(url + "/prescriptions", headers=auth(doctor), json={"drug_name": "Ferrous sulfate", "dosage": "200 mg", "instructions": "Once daily"}).status_code == 201)
+check("doctor releases the case", client.post(url + "/release", headers=auth(doctor)).get_json()["status"] == "released")
+check("releasing twice is refused (409)", client.post(url + "/release", headers=auth(doctor)).status_code == 409)
+shown = client.get(url, headers=auth(patient2)).get_json()
+check("patient2 now sees the CRITICAL notice", "CRITICAL" in shown.get("notice", ""))
+check("patient1 cannot read patient2's case (404)", client.get(url, headers=auth(patient1)).status_code == 404)
 
 # print("--- openFDA integration (network is mocked) ---")
 # fda = {"results": [{"purpose": ["Test purpose"], "warnings": ["Test warning"]}]}
