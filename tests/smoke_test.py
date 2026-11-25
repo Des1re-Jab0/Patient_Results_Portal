@@ -49,29 +49,29 @@ class FakeResponse:
         return self._payload
 
 
-# print("--- basics ---")
-# resp = client.get("/health")
-# check("health endpoint is ok", resp.status_code == 200 and resp.get_json()["status"] == "ok")
-# check("X-Served-By header is present", "X-Served-By" in resp.headers)
-# check("wrong password is rejected (401)",
-#       client.post("/auth/login", json={"username": "patient1", "password": "nope"}).status_code == 401)
-# patient1 = login("patient1", "Patient123!")
-# patient2 = login("patient2", "Patient456!")
-# lab = login("lab1", "LabTech123!")
-# doctor = login("doctor1", "Doctor123!")
-# check("all four demo accounts can log in", all([patient1, patient2, lab, doctor]))
-# check("no token is rejected (401)", client.get("/cases").status_code == 401)
-# check("forged token is rejected (401)", client.get("/cases", headers=auth("abc.def.ghi")).status_code == 401)
+print("--- basics ---")
+resp = client.get("/health")
+check("health endpoint is ok", resp.status_code == 200 and resp.get_json()["status"] == "ok")
+check("X-Served-By header is present", "X-Served-By" in resp.headers)
+check("wrong password is rejected (401)",
+      client.post("/auth/login", json={"username": "patient1", "password": "nope"}).status_code == 401)
+patient1 = login("patient1", "Patient123!")
+patient2 = login("patient2", "Patient456!")
+lab = login("lab1", "LabTech123!")
+doctor = login("doctor1", "Doctor123!")
+check("all four demo accounts can log in", all([patient1, patient2, lab, doctor]))
+check("no token is rejected (401)", client.get("/cases").status_code == 401)
+check("forged token is rejected (401)", client.get("/cases", headers=auth("abc.def.ghi")).status_code == 401)
 
-# print("--- patient visibility ---")
-# cases = client.get("/cases", headers=auth(patient1)).get_json()["cases"]
-# check("patient1 sees only released cases 1 and 2", {c["id"] for c in cases} == {1, 2}, cases)
-# case2 = client.get("/cases/2", headers=auth(patient1)).get_json()
-# check("case 2 shows a HIGH glucose flag", case2["results"][0]["flag"] == "high")
-# check("case 2 shows the doctor conclusion and Metformin",
-#       bool(case2["conclusion"]) and case2["prescriptions"][0]["drug"] == "Metformin")
-# check("unreleased case 3 is hidden from patient1 (404)", client.get("/cases/3", headers=auth(patient1)).status_code == 404)
-# check("patient2 sees nothing yet", client.get("/cases", headers=auth(patient2)).get_json()["count"] == 0)
+print("--- patient visibility ---")
+cases = client.get("/cases", headers=auth(patient1)).get_json()["cases"]
+check("patient1 sees only released cases 1 and 2", {c["id"] for c in cases} == {1, 2}, cases)
+case2 = client.get("/cases/2", headers=auth(patient1)).get_json()
+check("case 2 shows a HIGH glucose flag", case2["results"][0]["flag"] == "high")
+check("case 2 shows the doctor conclusion and Metformin",
+      bool(case2["conclusion"]) and case2["prescriptions"][0]["drug"] == "Metformin")
+check("unreleased case 3 is hidden from patient1 (404)", client.get("/cases/3", headers=auth(patient1)).status_code == 404)
+check("patient2 sees nothing yet", client.get("/cases", headers=auth(patient2)).get_json()["count"] == 0)
 
 # print("--- search, filter, sort and validation ---")
 # check("search glucose finds 1 case", client.get("/cases?q=glucose", headers=auth(patient1)).get_json()["count"] == 1)
