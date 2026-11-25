@@ -194,60 +194,60 @@ def cmd_logout(_):
     ok("Logged out.")
 
 
-# def cmd_list(args):
-#     params = {"status": args.status, "q": args.search, "from": args.date_from, "to": args.date_to,
-#               "sort": args.sort, "order": "asc" if args.asc else "desc"}
-#     data, server = call("GET", "/cases", params={k: v for k, v in params.items() if v})
-#     if not data["cases"]:
-#         warn("No cases found. If you were tested recently, your results may still be in review.")
-#     else:
-#         rows = [(c["id"], c["patient"], c["status"], c["created_at"][:10], c["tests"],
-#                  c["abnormal"], "YES" if c.get("critical") else "") for c in data["cases"]]
-#         table(rows, ["ID", "PATIENT", "STATUS", "DATE", "TESTS", "ABNORMAL", "CRITICAL"], list_style)
-#         print(paint(str(len(rows)) + " case(s)", "gray"))
-#     footer(data, server)
+def cmd_list(args):
+    params = {"status": args.status, "q": args.search, "from": args.date_from, "to": args.date_to,
+              "sort": args.sort, "order": "asc" if args.asc else "desc"}
+    data, server = call("GET", "/cases", params={k: v for k, v in params.items() if v})
+    if not data["cases"]:
+        warn("No cases found. If you were tested recently, your results may still be in review.")
+    else:
+        rows = [(c["id"], c["patient"], c["status"], c["created_at"][:10], c["tests"],
+                 c["abnormal"], "YES" if c.get("critical") else "") for c in data["cases"]]
+        table(rows, ["ID", "PATIENT", "STATUS", "DATE", "TESTS", "ABNORMAL", "CRITICAL"], list_style)
+        print(paint(str(len(rows)) + " case(s)", "gray"))
+    footer(data, server)
 
 
-# def cmd_show(args):
-#     data, server = call("GET", "/cases/" + str(args.case_id))
-#     sep = paint("  |  ", "gray")
-#     print(paint("Case " + str(data["id"]), "bold", "cyan") + sep + paint(clean(data["patient"]), "bold") + sep
-#           + paint(clean(data["status"]), *STATUS_STYLE.get(data["status"], ())) + sep
-#           + paint(data["created_at"][:10], "gray"))
-#     if data.get("notice"):
-#         print()
-#         banner(clean(data["notice"]), "bold", "white", "bg_red")
-#     print()
-#     rows = [(r["test"], r["value"], r["unit"], r["range"], r["flag"].upper()) for r in data["results"]]
-#     table(rows, ["TEST", "VALUE", "UNIT", "REF RANGE", "FLAG"], result_style)
-#     if "conclusion" in data:
-#         print()
-#         conclusion = clean(data["conclusion"]) if data["conclusion"] else paint("not yet added", "yellow")
-#         print(paint("Doctor conclusion: ", "bold", "cyan") + conclusion)
-#         for p in data["prescriptions"]:
-#             print(paint("Prescribed: ", "bold", "green") + clean(p["drug"]) + " - " + clean(p["dosage"])
-#                   + " - " + clean(p["instructions"]))
-#     footer(data, server)
+def cmd_show(args):
+    data, server = call("GET", "/cases/" + str(args.case_id))
+    sep = paint("  |  ", "gray")
+    print(paint("Case " + str(data["id"]), "bold", "cyan") + sep + paint(clean(data["patient"]), "bold") + sep
+          + paint(clean(data["status"]), *STATUS_STYLE.get(data["status"], ())) + sep
+          + paint(data["created_at"][:10], "gray"))
+    if data.get("notice"):
+        print()
+        banner(clean(data["notice"]), "bold", "white", "bg_red")
+    print()
+    rows = [(r["test"], r["value"], r["unit"], r["range"], r["flag"].upper()) for r in data["results"]]
+    table(rows, ["TEST", "VALUE", "UNIT", "REF RANGE", "FLAG"], result_style)
+    if "conclusion" in data:
+        print()
+        conclusion = clean(data["conclusion"]) if data["conclusion"] else paint("not yet added", "yellow")
+        print(paint("Doctor conclusion: ", "bold", "cyan") + conclusion)
+        for p in data["prescriptions"]:
+            print(paint("Prescribed: ", "bold", "green") + clean(p["drug"]) + " - " + clean(p["dosage"])
+                  + " - " + clean(p["instructions"]))
+    footer(data, server)
 
 
-# def cmd_meds(args):
-#     data, server = call("GET", "/cases/" + str(args.case_id) + "/medications")
-#     if not data["medications"]:
-#         warn("No medication prescribed for this case.")
-#     for med in data["medications"]:
-#         print(paint(clean(med["drug"]), "bold", "green") + "  " + clean(med["dosage"])
-#               + paint("  |  ", "gray") + clean(med["instructions"]))
-#         info = med["drug_info"]
-#         if info["available"]:
-#             for label, key, color in (("Purpose", "purpose", "cyan"), ("Warnings", "warnings", "yellow")):
-#                 if info.get(key):
-#                     print("  " + paint(label + ":", "bold", color))
-#                     print(textwrap.fill(clean(info[key]), WIDTH, initial_indent="    ", subsequent_indent="    "))
-#             print(paint("  Source: openFDA (https://open.fda.gov)", "gray"))
-#         else:
-#             warn("  Drug information unavailable: " + clean(info["reason"]))
-#         print()
-#     footer(data, server)
+def cmd_meds(args):
+    data, server = call("GET", "/cases/" + str(args.case_id) + "/medications")
+    if not data["medications"]:
+        warn("No medication prescribed for this case.")
+    for med in data["medications"]:
+        print(paint(clean(med["drug"]), "bold", "green") + "  " + clean(med["dosage"])
+              + paint("  |  ", "gray") + clean(med["instructions"]))
+        info = med["drug_info"]
+        if info["available"]:
+            for label, key, color in (("Purpose", "purpose", "cyan"), ("Warnings", "warnings", "yellow")):
+                if info.get(key):
+                    print("  " + paint(label + ":", "bold", color))
+                    print(textwrap.fill(clean(info[key]), WIDTH, initial_indent="    ", subsequent_indent="    "))
+            print(paint("  Source: openFDA (https://open.fda.gov)", "gray"))
+        else:
+            warn("  Drug information unavailable: " + clean(info["reason"]))
+        print()
+    footer(data, server)
 
 
 # def parse_test(raw):
