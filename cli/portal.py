@@ -74,46 +74,46 @@ def clean(value):
     return "".join(ch if ch.isprintable() else (" " if ch in "\r\n\t" else "") for ch in str(value))
 
 
-# def die(message):
-#     print(paint("Error: ", "bold", "red", err=True) + clean(message), file=sys.stderr)
-#     sys.exit(1)
+def die(message):
+    print(paint("Error: ", "bold", "red", err=True) + clean(message), file=sys.stderr)
+    sys.exit(1)
 
 
-# def ok(message):
-#     print(paint(symbol("\u2713", "OK") + " " + message, "green"))
+def ok(message):
+    print(paint(symbol("\u2713", "OK") + " " + message, "green"))
 
 
-# def warn(message):
-#     print(paint(message, "yellow"))
+def warn(message):
+    print(paint(message, "yellow"))
 
 
-# def served(server):
-#     print(paint("[served by " + clean(server) + "]", "gray"))
+def served(server):
+    print(paint("[served by " + clean(server) + "]", "gray"))
 
 
-# def banner(message, *styles):
-#     """Full-width coloured box for important notices."""
-#     if not COLOR["out"]:
-#         print("!!! " + message + " !!!")
-#         return
-#     for line in textwrap.wrap(message, WIDTH - 4) or [""]:
-#         print(paint("  " + line.ljust(WIDTH - 4) + "  ", *styles))
+def banner(message, *styles):
+    """Full-width coloured box for important notices."""
+    if not COLOR["out"]:
+        print("!!! " + message + " !!!")
+        return
+    for line in textwrap.wrap(message, WIDTH - 4) or [""]:
+        print(paint("  " + line.ljust(WIDTH - 4) + "  ", *styles))
 
 
-# def table(rows, headers, cell_style=None):
-#     """Print an aligned table. Widths use plain text; colours are added after padding."""
-#     rows = [[clean(c) for c in row] for row in rows]
-#     widths = [max(len(x) for x in col) for col in zip(headers, *rows)]
-#     header = "  ".join(h.ljust(w) for h, w in zip(headers, widths))
-#     print(paint(" " + header + " ", "bold", "white", "bg_blue"))
-#     if not COLOR["out"]:
-#         print("-" * (len(header) + 2))
-#     for row in rows:
-#         cells = []
-#         for col, (text, width) in enumerate(zip(row, widths)):
-#             styles = cell_style(col, text, row) if cell_style else ()
-#             cells.append(paint(text.ljust(width), *styles))
-#         print(" " + "  ".join(cells) + " ")
+def table(rows, headers, cell_style=None):
+    """Print an aligned table. Widths use plain text; colours are added after padding."""
+    rows = [[clean(c) for c in row] for row in rows]
+    widths = [max(len(x) for x in col) for col in zip(headers, *rows)]
+    header = "  ".join(h.ljust(w) for h, w in zip(headers, widths))
+    print(paint(" " + header + " ", "bold", "white", "bg_blue"))
+    if not COLOR["out"]:
+        print("-" * (len(header) + 2))
+    for row in rows:
+        cells = []
+        for col, (text, width) in enumerate(zip(row, widths)):
+            styles = cell_style(col, text, row) if cell_style else ()
+            cells.append(paint(text.ljust(width), *styles))
+        print(" " + "  ".join(cells) + " ")
 
 
 # def list_style(col, text, row):
