@@ -296,59 +296,59 @@ def cmd_release(args):
     served(server)
 
 
-# def build_parser():
-#     parser = argparse.ArgumentParser(prog="portal.py", description="Results Portal CLI (set PORTAL_URL to choose the server)")
-#     parser.add_argument("--no-color", action="store_true", help="turn colours off (also: set NO_COLOR=1)")
-#     sub = parser.add_subparsers(dest="command", required=True)
+def build_parser():
+    parser = argparse.ArgumentParser(prog="portal.py", description="Results Portal CLI (set PORTAL_URL to choose the server)")
+    parser.add_argument("--no-color", action="store_true", help="turn colours off (also: set NO_COLOR=1)")
+    sub = parser.add_subparsers(dest="command", required=True)
 
-#     p = sub.add_parser("login", help="log in")
-#     p.add_argument("username")
-#     p.set_defaults(func=cmd_login)
+    p = sub.add_parser("login", help="log in")
+    p.add_argument("username")
+    p.set_defaults(func=cmd_login)
 
-#     sub.add_parser("logout", help="log out").set_defaults(func=cmd_logout)
+    sub.add_parser("logout", help="log out").set_defaults(func=cmd_logout)
 
-#     p = sub.add_parser("list", help="list cases (filter, search, sort)")
-#     p.add_argument("--status", choices=["lab_completed", "doctor_reviewed", "released"])
-#     p.add_argument("--search", help="patient name or test name")
-#     p.add_argument("--from", dest="date_from", help="YYYY-MM-DD")
-#     p.add_argument("--to", dest="date_to", help="YYYY-MM-DD")
-#     p.add_argument("--sort", choices=["date", "patient", "status"], default="date")
-#     p.add_argument("--asc", action="store_true", help="oldest first")
-#     p.set_defaults(func=cmd_list)
+    p = sub.add_parser("list", help="list cases (filter, search, sort)")
+    p.add_argument("--status", choices=["lab_completed", "doctor_reviewed", "released"])
+    p.add_argument("--search", help="patient name or test name")
+    p.add_argument("--from", dest="date_from", help="YYYY-MM-DD")
+    p.add_argument("--to", dest="date_to", help="YYYY-MM-DD")
+    p.add_argument("--sort", choices=["date", "patient", "status"], default="date")
+    p.add_argument("--asc", action="store_true", help="oldest first")
+    p.set_defaults(func=cmd_list)
 
-#     p = sub.add_parser("show", help="show one case in detail")
-#     p.add_argument("case_id", type=int)
-#     p.set_defaults(func=cmd_show)
+    p = sub.add_parser("show", help="show one case in detail")
+    p.add_argument("case_id", type=int)
+    p.set_defaults(func=cmd_show)
 
-#     p = sub.add_parser("meds", help="show prescriptions with drug information (openFDA)")
-#     p.add_argument("case_id", type=int)
-#     p.set_defaults(func=cmd_meds)
+    p = sub.add_parser("meds", help="show prescriptions with drug information (openFDA)")
+    p.add_argument("case_id", type=int)
+    p.set_defaults(func=cmd_meds)
 
-#     p = sub.add_parser("upload", help="(lab) upload results for a patient")
-#     p.add_argument("patient", help="patient username")
-#     p.add_argument("--test", action="append", required=True,
-#                    help="name,value,unit,ref_low,ref_high[,crit_low,crit_high] (repeatable)")
-#     p.set_defaults(func=cmd_upload)
+    p = sub.add_parser("upload", help="(lab) upload results for a patient")
+    p.add_argument("patient", help="patient username")
+    p.add_argument("--test", action="append", required=True,
+                   help="name,value,unit,ref_low,ref_high[,crit_low,crit_high] (repeatable)")
+    p.set_defaults(func=cmd_upload)
 
-#     p = sub.add_parser("conclude", help="(doctor) write the conclusion")
-#     p.add_argument("case_id", type=int)
-#     p.add_argument("text")
-#     p.set_defaults(func=cmd_conclude)
+    p = sub.add_parser("conclude", help="(doctor) write the conclusion")
+    p.add_argument("case_id", type=int)
+    p.add_argument("text")
+    p.set_defaults(func=cmd_conclude)
 
-#     p = sub.add_parser("prescribe", help="(doctor) add a prescription")
-#     p.add_argument("case_id", type=int)
-#     p.add_argument("--drug", required=True)
-#     p.add_argument("--dose", required=True)
-#     p.add_argument("--instructions", required=True)
-#     p.set_defaults(func=cmd_prescribe)
+    p = sub.add_parser("prescribe", help="(doctor) add a prescription")
+    p.add_argument("case_id", type=int)
+    p.add_argument("--drug", required=True)
+    p.add_argument("--dose", required=True)
+    p.add_argument("--instructions", required=True)
+    p.set_defaults(func=cmd_prescribe)
 
-#     p = sub.add_parser("release", help="(doctor) release the case to the patient")
-#     p.add_argument("case_id", type=int)
-#     p.set_defaults(func=cmd_release)
-#     return parser
+    p = sub.add_parser("release", help="(doctor) release the case to the patient")
+    p.add_argument("case_id", type=int)
+    p.set_defaults(func=cmd_release)
+    return parser
 
 
-# if __name__ == "__main__":
-#     args = build_parser().parse_args()
-#     init_color(args.no_color)
-#     args.func(args)
+if __name__ == "__main__":
+    args = build_parser().parse_args()
+    init_color(args.no_color)
+    args.func(args)
