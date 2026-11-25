@@ -43,20 +43,20 @@ HEADERS = ["ID", "PATIENT", "STATUS", "DATE", "TESTS", "ABNORMAL", "CRITICAL"]
 RESULT_ROWS = [("Potassium", 6.9, "mmol/L", "3.5-5.0", "CRITICAL"), ("Sodium", 140, "mmol/L", "135-145", "NORMAL")]
 RESULT_HEADERS = ["TEST", "VALUE", "UNIT", "REF RANGE", "FLAG"]
 
-# print("--- colour switch ---")
-# set_color(False)
-# check("paint returns plain text when colour is off", portal.paint("hi", "red") == "hi")
-# set_color(True)
-# check("paint adds colour codes when colour is on", portal.paint("hi", "red") == "\x1b[31mhi\x1b[0m")
-# check("paint with no style leaves text alone", portal.paint("hi") == "hi")
-# os.environ["FORCE_COLOR"] = "1"
-# os.environ["NO_COLOR"] = "1"
-# portal.init_color(False)
-# check("NO_COLOR wins over FORCE_COLOR", portal.COLOR["out"] is False)
-# del os.environ["NO_COLOR"]
-# portal.init_color(True)
-# check("--no-color turns colours off", portal.COLOR["out"] is False)
-# del os.environ["FORCE_COLOR"]
+print("--- colour switch ---")
+set_color(False)
+check("paint returns plain text when colour is off", portal.paint("hi", "red") == "hi")
+set_color(True)
+check("paint adds colour codes when colour is on", portal.paint("hi", "red") == "\x1b[31mhi\x1b[0m")
+check("paint with no style leaves text alone", portal.paint("hi") == "hi")
+os.environ["FORCE_COLOR"] = "1"
+os.environ["NO_COLOR"] = "1"
+portal.init_color(False)
+check("NO_COLOR wins over FORCE_COLOR", portal.COLOR["out"] is False)
+del os.environ["NO_COLOR"]
+portal.init_color(True)
+check("--no-color turns colours off", portal.COLOR["out"] is False)
+del os.environ["FORCE_COLOR"]
 
 # print("--- table layout ---")
 # for label, on in (("colour off", False), ("colour on", True)):
