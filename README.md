@@ -87,7 +87,7 @@ Patient_Results_Portal/
 ### 1. Clone the repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/Des1re-Jab0/Patient_Results_Portal
 cd Patient_Results_Portal
 ```
 
