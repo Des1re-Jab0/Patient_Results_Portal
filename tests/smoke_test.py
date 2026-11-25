@@ -139,11 +139,11 @@ with mock.patch("server.openfda.requests.get", return_value=FakeResponse(429, {}
     check("openFDA rate limit (429) is handled", not info["available"] and "429" in info["reason"], info)
 check("patient1 cannot read medications of someone else's case (404)", client.get(url + "/medications", headers=auth(patient1)).status_code == 404)
 
-# print("--- login rate limit (last, because it blocks further logins) ---")
-# codes = [client.post("/auth/login", json={"username": "x", "password": "y"}).status_code for _ in range(12)]
-# check("too many login attempts are blocked (429)", 429 in codes, codes)
+print("--- login rate limit (last, because it blocks further logins) ---")
+codes = [client.post("/auth/login", json={"username": "x", "password": "y"}).status_code for _ in range(12)]
+check("too many login attempts are blocked (429)", 429 in codes, codes)
 
-# print()
-# print("RESULT: %d passed, %d failed" % (results["passed"], results["failed"]))
-# shutil.rmtree(TMP, ignore_errors=True)
-# sys.exit(1 if results["failed"] else 0)
+print()
+print("RESULT: %d passed, %d failed" % (results["passed"], results["failed"]))
+shutil.rmtree(TMP, ignore_errors=True)
+sys.exit(1 if results["failed"] else 0)
