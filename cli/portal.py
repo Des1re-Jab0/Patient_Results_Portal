@@ -116,42 +116,42 @@ def table(rows, headers, cell_style=None):
         print(" " + "  ".join(cells) + " ")
 
 
-# def list_style(col, text, row):
-#     critical = row[6] == "YES"
-#     if col == 0:
-#         return ("bold", "red") if critical else ("bold", "cyan")
-#     if col == 1:
-#         return ("bold", "red") if critical else ("bold",)
-#     if col == 2:
-#         return STATUS_STYLE.get(text, ())
-#     if col == 3:
-#         return ("gray",)
-#     if col == 5:
-#         return ("bold", "yellow") if text != "0" else ("gray",)
-#     if col == 6 and critical:
-#         return ("bold", "white", "bg_red")
-#     return ()
+def list_style(col, text, row):
+    critical = row[6] == "YES"
+    if col == 0:
+        return ("bold", "red") if critical else ("bold", "cyan")
+    if col == 1:
+        return ("bold", "red") if critical else ("bold",)
+    if col == 2:
+        return STATUS_STYLE.get(text, ())
+    if col == 3:
+        return ("gray",)
+    if col == 5:
+        return ("bold", "yellow") if text != "0" else ("gray",)
+    if col == 6 and critical:
+        return ("bold", "white", "bg_red")
+    return ()
 
 
-# def result_style(col, text, row):
-#     flag = row[4]
-#     if col == 0:
-#         return VALUE_STYLE.get(flag, ("bold",))
-#     if col == 1:
-#         return VALUE_STYLE.get(flag, ())
-#     if col in (2, 3):
-#         return ("gray",)
-#     if col == 4:
-#         return FLAG_STYLE.get(flag, ())
-#     return ()
+def result_style(col, text, row):
+    flag = row[4]
+    if col == 0:
+        return VALUE_STYLE.get(flag, ("bold",))
+    if col == 1:
+        return VALUE_STYLE.get(flag, ())
+    if col in (2, 3):
+        return ("gray",)
+    if col == 4:
+        return FLAG_STYLE.get(flag, ())
+    return ()
 
 
-# def footer(data, server):
-#     if data.get("disclaimer"):
-#         print()
-#         for line in textwrap.wrap(clean(data["disclaimer"]), WIDTH):
-#             print(paint(line, "yellow"))  # one colour code per line, so pagers keep it
-#     served(server)
+def footer(data, server):
+    if data.get("disclaimer"):
+        print()
+        for line in textwrap.wrap(clean(data["disclaimer"]), WIDTH):
+            print(paint(line, "yellow"))  # one colour code per line, so pagers keep it
+    served(server)
 
 
 # # ---------- talking to the API ----------
