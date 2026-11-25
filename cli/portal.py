@@ -250,50 +250,50 @@ def cmd_meds(args):
     footer(data, server)
 
 
-# def parse_test(raw):
-#     parts = [p.strip() for p in raw.split(",")]
-#     if len(parts) not in (5, 7):
-#         die("--test format: name,value,unit,ref_low,ref_high[,crit_low,crit_high]")
-#     try:
-#         item = {"test_name": parts[0], "value": float(parts[1]), "unit": parts[2],
-#                 "ref_low": float(parts[3]), "ref_high": float(parts[4])}
-#         if len(parts) == 7:
-#             item["crit_low"], item["crit_high"] = float(parts[5]), float(parts[6])
-#     except ValueError:
-#         die("Numeric fields in --test must be numbers: " + raw)
-#     return item
+def parse_test(raw):
+    parts = [p.strip() for p in raw.split(",")]
+    if len(parts) not in (5, 7):
+        die("--test format: name,value,unit,ref_low,ref_high[,crit_low,crit_high]")
+    try:
+        item = {"test_name": parts[0], "value": float(parts[1]), "unit": parts[2],
+                "ref_low": float(parts[3]), "ref_high": float(parts[4])}
+        if len(parts) == 7:
+            item["crit_low"], item["crit_high"] = float(parts[5]), float(parts[6])
+    except ValueError:
+        die("Numeric fields in --test must be numbers: " + raw)
+    return item
 
 
-# def cmd_upload(args):
-#     payload = {"patient_username": args.patient, "results": [parse_test(t) for t in args.test]}
-#     data, server = call("POST", "/cases", payload)
-#     message = "Case " + str(data["id"]) + " created. " + clean(data["message"])
-#     if data.get("status") == "released":
-#         ok(message)
-#     else:
-#         warn(message)
-#     if data.get("critical"):
-#         print(paint("CRITICAL value detected: this case needs urgent doctor review.", "bold", "red"))
-#     served(server)
+def cmd_upload(args):
+    payload = {"patient_username": args.patient, "results": [parse_test(t) for t in args.test]}
+    data, server = call("POST", "/cases", payload)
+    message = "Case " + str(data["id"]) + " created. " + clean(data["message"])
+    if data.get("status") == "released":
+        ok(message)
+    else:
+        warn(message)
+    if data.get("critical"):
+        print(paint("CRITICAL value detected: this case needs urgent doctor review.", "bold", "red"))
+    served(server)
 
 
-# def cmd_conclude(args):
-#     data, server = call("PUT", "/cases/" + str(args.case_id) + "/conclusion", {"conclusion": args.text})
-#     ok("Conclusion saved. Status: " + clean(data["status"]))
-#     served(server)
+def cmd_conclude(args):
+    data, server = call("PUT", "/cases/" + str(args.case_id) + "/conclusion", {"conclusion": args.text})
+    ok("Conclusion saved. Status: " + clean(data["status"]))
+    served(server)
 
 
-# def cmd_prescribe(args):
-#     payload = {"drug_name": args.drug, "dosage": args.dose, "instructions": args.instructions}
-#     data, server = call("POST", "/cases/" + str(args.case_id) + "/prescriptions", payload)
-#     ok("Prescription added.")
-#     served(server)
+def cmd_prescribe(args):
+    payload = {"drug_name": args.drug, "dosage": args.dose, "instructions": args.instructions}
+    data, server = call("POST", "/cases/" + str(args.case_id) + "/prescriptions", payload)
+    ok("Prescription added.")
+    served(server)
 
 
-# def cmd_release(args):
-#     data, server = call("POST", "/cases/" + str(args.case_id) + "/release")
-#     ok("Case " + str(data["id"]) + " released to the patient.")
-#     served(server)
+def cmd_release(args):
+    data, server = call("POST", "/cases/" + str(args.case_id) + "/release")
+    ok("Case " + str(data["id"]) + " released to the patient.")
+    served(server)
 
 
 # def build_parser():
