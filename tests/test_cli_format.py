@@ -94,6 +94,6 @@ check("server text cannot inject terminal escape codes", "\x1b" not in portal.cl
 check("newlines in server text become spaces", portal.clean("a\nb") == "a b")
 set_color(False)
 
-# print()
-# print("RESULT: %d passed, %d failed" % (results["passed"], results["failed"]))
-# sys.exit(1 if results["failed"] else 0)
+print()
+print("RESULT: %d passed, %d failed" % (results["passed"], results["failed"]))
+sys.exit(1 if results["failed"] else 0)
